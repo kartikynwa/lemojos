@@ -20,16 +20,12 @@ pub(crate) fn index() -> Html<Index> {
 #[derive(FromForm)]
 pub(crate) struct InstanceForm<'a> {
     instance: &'a str,
-    show_all: bool,
-    show_animated: bool,
 }
 
 #[post("/", data = "<form>")]
 pub(crate) fn instance_form(form: Form<InstanceForm<'_>>) -> Redirect {
     Redirect::to(uri!(crate::instance(
         form.instance,
-        form.show_all.then_some(true),
-        form.show_animated.then_some(true),
     )))
 }
 

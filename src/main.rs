@@ -52,55 +52,57 @@ impl<T: Template> Responder<'_, 'static> for Html<T> {
 }
 
 #[derive(Deserialize)]
+struct Site {
+    custom_emojis: Vec<EmojoWrapper>,
+}
+
+#[derive(Deserialize)]
+struct EmojoWrapper {
+    custom_emoji: Emojo,
+}
+
+#[derive(Deserialize)]
 struct Emojo {
     shortcode: String,
+    alt_text: String,
+    #[serde(rename(deserialize = "image_url"))]
     url: String,
-    static_url: String,
-    visible_in_picker: Option<bool>,
 }
 
 #[derive(Template)]
 #[template(path = "emojo.html")]
 struct Output {
     instance: String,
-    show_animated: bool,
     emojo: Vec<Emojo>,
 }
 
-#[get("/<instance>?<show_all>&<show_animated>")]
+#[get("/<instance>")]
 async fn instance(
     client: &State<Client>,
     instance: String,
-    show_all: Option<bool>,
-    show_animated: Option<bool>,
 ) -> Result<Html<Output>, InstanceError> {
-    let show_all = show_all.unwrap_or_default();
-    let show_animated = show_animated.unwrap_or_default();
-
-    let mut url = Url::from_str("https://host.invalid/api/v1/custom_emojis").unwrap();
+    let mut url = Url::from_str("https://host.invalid/api/v3/site").unwrap();
     if url.set_host(Some(&instance)).is_err() {
         return Err(InstanceError::from_kind(Kind::NotFound, instance));
     }
 
-    let mut emojo = match client
+    let emojo_wrappers = match client
         .get(url)
         .send()
         .await
         .and_then(reqwest::Response::error_for_status)
     {
-        Ok(response) => match response.json::<Vec<Emojo>>().await {
-            Ok(emojo) => emojo,
+        Ok(response) => match response.json::<Site>().await {
+            Ok(site) => site.custom_emojis,
             Err(err) => return Err(InstanceError::new(err, instance)),
         },
         Err(err) => return Err(InstanceError::new(err, instance)),
     };
-    if !show_all {
-        emojo.retain(|x| x.visible_in_picker.unwrap_or(true));
-    }
+
+    let emojo = emojo_wrappers.into_iter().map(|ew| ew.custom_emoji).collect();
 
     Ok(Html(Output {
         instance,
-        show_animated,
         emojo,
     }))
 }

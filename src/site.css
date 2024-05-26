@@ -25,8 +25,8 @@ dl.emojo div * {
 }
 
 dl.emojo dt img {
-    height: 20px;
-    width: 20px;
+    height: 50px;
+    width: 50px;
     object-fit: contain;
     vertical-align: middle;
     padding-bottom: 2px;

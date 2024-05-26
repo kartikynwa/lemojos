@@ -6,21 +6,12 @@
     click/touch to copy to clipboard
 </p>
 <dl class="emojo">
-    {% if show_animated %}
-        {% for emoj in emojo %}
-        <div>
-            <dt><img src="{{ emoj.url }}" alt=":{{ emoj.shortcode }}:" loading=lazy></dt>
-            <dd>:{{ emoj.shortcode }}:</dd>
-        </div>
-        {% endfor %}
-    {% else %}
-        {% for emoj in emojo %}
-        <div>
-            <dt><img src="{{ emoj.static_url }}" alt=":{{ emoj.shortcode }}:" loading=lazy></dt>
-            <dd>:{{ emoj.shortcode }}:</dd>
-        </div>
-        {% endfor %}
-    {% endif %}
+    {% for emoj in emojo %}
+    <div>
+        <dt><img src="{{ emoj.url }}" alt=":{{ emoj.shortcode }}:" loading=lazy></dt>
+        <dd>:{{ emoj.shortcode }}:</dd>
+    </div>
+    {% endfor %}
 </dl>
 {% endblock body %}
 {% block script %}
