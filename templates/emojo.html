@@ -8,8 +8,9 @@
 <dl class="emojo">
     {% for emoj in emojo %}
     <div>
-        <dt><img src="{{ emoj.url }}" alt=":{{ emoj.shortcode }}:" loading=lazy></dt>
+        <dt><img src="{{ emoj.url }}" alt="{{ emoj.alt_text }}" loading=lazy></dt>
         <dd>:{{ emoj.shortcode }}:</dd>
+        <dd class="copy-text">![{{ emoj.alt_text }}]({{ emoj.url }} "emoji {{ emoj.shortcode }}")</dd>
     </div>
     {% endfor %}
 </dl>

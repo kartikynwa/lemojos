@@ -41,6 +41,10 @@ dl.emojo dd.success {
     color: rgb(202, 143, 4);
 }
 
+dl.emojo dd.copy-text {
+    display: none;
+}
+
 footer {
     font-size: smaller;
 }
